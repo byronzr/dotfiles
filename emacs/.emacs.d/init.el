@@ -383,9 +383,9 @@
 
 ;; 默认就是LOGBOOK
 ;; (setq org-log-into-drawer "LOGBOOK")
-(setq org-log-into-drawer t)
-(setq org-log-state 'time)
-(setq org-log-done 'time)
+;; (setq org-log-into-drawer t)
+;; (setq org-log-state 'time)
+;; (setq org-log-done 'time)
 
 ;; 新的 buffer(HELP类)自动获得焦点
 (setq help-window-select t)

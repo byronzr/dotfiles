@@ -305,6 +305,7 @@ local setup_treesitter = function()
         "css",
         "javascript",
         "typescript",
+        "toml",
     }
     local config = require("nvim-treesitter.config")
     local already_installed = config.get_installed()
@@ -335,15 +336,15 @@ setup_treesitter()
 vim.pack.add({
     -- Language Server Protocols
     "https://github.com/neovim/nvim-lspconfig",
-    "https://github.com/mason-org/mason.nvim",
+    -- "https://github.com/mason-org/mason.nvim",
     {
         src = "https://github.com/saghen/blink.cmp",
         version = vim.version.range("1.*"),
     },
 })
 packadd("nvim-lspconfig")
-packadd("mason.nvim")
-require("mason").setup({})
+-- packadd("mason.nvim")
+-- require("mason").setup({})
 
 local diagnostic_signs = {
     Error = " ",
@@ -493,7 +494,8 @@ vim.lsp.config("lua_ls", {
 })
 
 vim.lsp.config("rust_analyzer", {
-    cmd = { "rust-analyzer" },
+    cmd = { "/Users/byronzr/.cargo/bin/rust-analyzer" },
+    filetypes = {"rs"},
     settings = {
         ["rust-analyzer"] = {
             lens = {
@@ -529,7 +531,13 @@ vim.lsp.config("rust_analyzer", {
     }
 })
 
+vim.lsp.config("taplo", {
+    cmd = { "/opt/homebrew/bin/taplo", "lsp", "stdio" },
+    filetypes = {"toml"},
+})
+
 vim.lsp.enable({
+    "taplo",
     "lua_ls",
     "rust_analyzer",
 })
