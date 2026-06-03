@@ -99,12 +99,12 @@ vim.g.maplocalleader = ' '
 keymap.set("i", "kj", "<ESC>")
 
 -- 行移动
-keymap.set("n", "<C-c><C-n>", "<cmd>m .+1<CR>==", { desc = "move line down" })
-keymap.set("n", "<C-c><C-p>", "<cmd>m .-2<CR>==", { desc = "move line up" })
+keymap.set("n", "<leader>j", ":m .+1<CR>==", { desc = "move line down" })
+keymap.set("n", "<leader>k", ":m .-2<CR>==", { desc = "move line up" })
 --
 -- 块状移动 --
-keymap.set("v", "<C-c><C-n>", "<cmd>m '>+1<CR>gv=gv", { desc = "move block down" })
-keymap.set("v", "<C-c><C-p>", "<cmd>m '<-2<CR>gv=gv", { desc = "move block up" })
+keymap.set("x", "<leader>j", ":m '>+1<CR>gv=gv", { desc = "move block down" })
+keymap.set("x", "<leader>k", ":m '<-2<CR>gv=gv", { desc = "move block up" })
 
 -- 取消高亮
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "clean highlight match" })
@@ -495,7 +495,7 @@ vim.lsp.config("lua_ls", {
 
 vim.lsp.config("rust_analyzer", {
     cmd = { "/Users/byronzr/.cargo/bin/rust-analyzer" },
-    filetypes = {"rs"},
+    filetypes = {"rust"},
     settings = {
         ["rust-analyzer"] = {
             lens = {

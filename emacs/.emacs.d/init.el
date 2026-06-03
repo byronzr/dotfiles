@@ -318,7 +318,6 @@
 (add-hook 'markdown-mode-hook
   (lambda ()
     (local-set-key (kbd "C-c d") 'insert-date)))
-
 (defun insert-date ()
   "插入当前日期时间"
   (interactive)
@@ -353,9 +352,27 @@
   :ensure t)
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
 
-;; Org-mode
-(setq org-todo-keywords
-	  '((sequence "TODO(t)" "NEXT(n)" "IMPORTANT(i)" "STARTED(s)" "BUG(b)" "REPORT(r)" "WAIT(w)" "|" "DONE(d!)" "DELETED(l!)" "CANCELED(c!)" "FIXED(f!)" "ARCHIVED(a!)")))
+
+(setq org-highest-priority ?A
+       org-lowest-priority  ?F
+       org-default-priority ?F)
+
+(setq org-priority-faces
+       '((?A . "DarkRed")
+         (?B . "DarkMagenta")
+         (?C . "tomato1")
+         (?D . "khaki1")
+         (?E . "OliveDrab1")
+         (?F . "SeaGreen1")))
+
+ ;; (setq org-priority-faces
+ ;;       '((?A . (:foreground "#ff6c6b" :weight bold))
+ ;;         (?B . (:foreground "#ff6c6b" :weight bold))
+ ;;         (?C . (:foreground "#ECBE7B"))
+ ;;         (?D . (:foreground "#ECBE7B"))
+ ;;         (?E . (:foreground "#7f848e"))
+ ;;         (?F . (:foreground "#7f848e"))))
+
 (setq org-todo-keyword-faces
 	  '(("TODO" . "white")
 		("NEXT" . "green4")
@@ -386,6 +403,11 @@
 ;; (setq org-log-into-drawer t)
 ;; (setq org-log-state 'time)
 ;; (setq org-log-done 'time)
+(setq org-log-done nil)
+(setq org-log-states nil)
+(setq org-log-reschedule nil)
+(setq org-log-redeadline nil)
+
 
 ;; 新的 buffer(HELP类)自动获得焦点
 (setq help-window-select t)
@@ -418,3 +440,4 @@
 (dolist (mode '(org-mode-hook
 				shell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
