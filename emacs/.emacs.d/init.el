@@ -358,12 +358,13 @@
        org-default-priority ?F)
 
 (setq org-priority-faces
-       '((?A . "DarkRed")
-         (?B . "DarkMagenta")
-         (?C . "tomato1")
-         (?D . "khaki1")
-         (?E . "OliveDrab1")
-         (?F . "SeaGreen1")))
+       '((?A . "systemRedColor")
+         (?B . "systemOrangeColor")
+         (?C . "systemYellowColor")
+         (?D . "systemIndigoColor")
+         (?E . "systemCyanColor")
+         (?F . "systemBrownColor")
+		 ))
 
  ;; (setq org-priority-faces
  ;;       '((?A . (:foreground "#ff6c6b" :weight bold))
@@ -372,7 +373,10 @@
  ;;         (?D . (:foreground "#ECBE7B"))
  ;;         (?E . (:foreground "#7f848e"))
  ;;         (?F . (:foreground "#7f848e"))))
-
+(setq org-todo-keywords
+       '((sequence "TODO(t)" "NEXT(n)" "IMPORTANT(i)" "STARTED(s)" "BUG(b)" "WAIT(w)" "REPORT(r)"
+                   "|"
+                   "DONE(d)" "DELETED(x)" "CANCELED(c)" "FIXED(f)")))
 (setq org-todo-keyword-faces
 	  '(("TODO" . "white")
 		("NEXT" . "green4")
@@ -381,11 +385,10 @@
 		("BUG" . "yellow")
 		("WAIT" . "magenta1")
 		("REPORT" . "magenta4")
-		("DONE" . (:foreground "cyan1" :weight bold :underline t))
 		("DELETED" . "red")
 		("CANCELED" . (:foreground org-warning :weight bold :strike-through t))
 		("FIXED" . (:foreground org-warning :weight bold :strike-through t))
-		("ARCHIVED" . (:foreground "unemphasizedSelectedTextBackgroundColor" :weight bold :underline t))
+		("DONE" . (:foreground "unemphasizedSelectedTextBackgroundColor" :weight bold :underline t))
 		))
 
 ;; 设置 todo 的 title 颜色
