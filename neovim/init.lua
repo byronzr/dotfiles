@@ -98,6 +98,9 @@ vim.g.maplocalleader = ' '
 --insert mode--
 keymap.set("i", "kj", "<ESC>")
 
+-- continuously paste
+vim.keymap.set("x", "p", [["_dP]], { desc = "Paste without yanking replaced text" })
+
 -- 行移动
 keymap.set("n", "<leader>j", ":m .+1<CR>==", { desc = "move line down" })
 keymap.set("n", "<leader>k", ":m .-2<CR>==", { desc = "move line up" })
@@ -110,8 +113,11 @@ keymap.set("x", "<leader>k", ":m '<-2<CR>gv=gv", { desc = "move block up" })
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "clean highlight match" })
 
 -- vim 特有的数值(+/-)
-keymap.set("n", "<leader>a", "<C-a>", { desc = "number increase" })
-keymap.set("n", "<leader>x", "<C-x>", { desc = "number decrease" })
+keymap.set("n", "<leader>+", "<C-a>", { desc = "number increase" })
+keymap.set("n", "<leader>-", "<C-x>", { desc = "number decrease" })
+
+keymap.set("n", "<C-a>", "<Nop>", { desc = "disable default number increase" })
+keymap.set("n", "<C-x>", "<Nop>", { desc = "disable default number decrease" })
 
 -- 一些emacs小快捷键一致性
 keymap.set('n', '<C-e>', '$')
@@ -405,7 +411,9 @@ local function lsp_on_attach(ev)
         vim.lsp.buf.definition()
     end, opts)
 
-    -- vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+    opts.desc = "LSP Code Action"
+    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+
     opts.desc = "LSP Rename"
     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
