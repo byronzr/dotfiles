@@ -1,5 +1,3 @@
--- title
-vim.o.titlestring = ""
 vim.o.title = false
 
 -- options ------------------------------------------------------------------------------------------------------------
@@ -34,7 +32,7 @@ opt.cursorline = true
 opt.mouse:append("a")
 
 -- 系统剪贴板
-opt.clipboard:append("unnamedplus")
+    opt.clipboard:append("unnamedplus")
 
 -- 默认新窗口位置
 opt.splitright = true
@@ -157,6 +155,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end
 })
 
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--   pattern = "*",
+--   callback = function(args)
+--     vim.lsp.buf.format({ 
+--       bufnr = args.buf,
+--       async = false, 
+--     })
+--   end,
+-- })
+
 
 -- colorscheme --------------------------------------------------------------------------------------------------------
 vim.pack.add({
@@ -270,9 +278,11 @@ require("fzf-lua").setup({
 keymap.set("n", "<leader>ff", function()
     require("fzf-lua").files()
 end, { desc = "fzf files" })
+
 keymap.set("n", "<leader>fg", function()
-    require("fzf-lua").live_grep()
-end, { desc = "fzf live grep" })
+    require("fzf-lua").live_grep({resume=true})
+end, { desc = "fzf live grep {resume}" })
+
 keymap.set("n", "<leader>fb", function()
     require("fzf-lua").buffers()
 end, { desc = "fzf buffers" })
@@ -312,6 +322,7 @@ local setup_treesitter = function()
         "javascript",
         "typescript",
         "toml",
+        "wgsl",
     }
     local config = require("nvim-treesitter.config")
     local already_installed = config.get_installed()
@@ -414,8 +425,8 @@ local function lsp_on_attach(ev)
     opts.desc = "LSP Code Action"
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 
-    opts.desc = "LSP Rename"
-    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    -- opts.desc = "LSP Rename"
+    -- vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
     vim.keymap.set("n", "<leader>D", function()
         vim.diagnostic.open_float({ scope = "line" })
@@ -493,12 +504,32 @@ vim.lsp.config["*"] = {
 }
 
 vim.lsp.config("lua_ls", {
-    settings = {
+    cmd="/opt/homebrew/bin/lua-language-server",
+    -- filetypes={"lua"},
+    -- settings = {
+    --     Lua = {
+    --         -- workspace = { library = vim.api.nvim_get_runtime_file("lua", true) }, 
+    --         diagnostics = { globals = { "vim" } },
+    --         telemetry = { enable = false },
+    --     },
+    -- },
+      single_file_support = true,
+      root_dir = function(bufnr, on_dir)
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        local root = vim.fs.root(name, { '.luarc.json', '.luarc.jsonc', '.git' ,'init.lua'})
+        on_dir(root or vim.fs.dirname(name))
+      end,
+      settings = {
         Lua = {
-            diagnostics = { globals = { "vim" } },
-            telemetry = { enable = false },
+          diagnostics = {
+            globals = { 'vim' },
+          },
+          workspace = {
+            checkThirdParty = false,
+            library = vim.api.nvim_get_runtime_file('', true),
+          },
         },
-    },
+      },
 })
 
 vim.lsp.config("rust_analyzer", {
@@ -506,6 +537,12 @@ vim.lsp.config("rust_analyzer", {
     filetypes = {"rust"},
     settings = {
         ["rust-analyzer"] = {
+            cargo = { allFeatures = true },
+            procMacro = { enable = true },
+            check = {
+                command = "clippy",
+                extraArgs = { "--no-deps" },  -- 只查自己代码，不查依赖
+            },
             lens = {
                 debug = {
                     enable = true
@@ -613,6 +650,10 @@ keymap.set("n", "<C-.>", function()
     require("flash").jump()
 end)
 
+keymap.set("c", "<C-.>", function()
+    require("flash").toggle()
+end)
+
 
 -- neogit--------------------------------------------------------------------------------------------------------------
 vim.pack.add({
@@ -673,29 +714,29 @@ vim.api.nvim_set_hl(0, "MyTodo", { fg = "#ffcc00", bold = true })
 vim.fn.matchadd("MyTodo", [[\v<(TODO|FIXME|NOTE|HACK):]])
 
 -- animate.cursor------------------------------------------------------------------------------------------------------
-vim.pack.add({
-    "https://github.com/sphamba/smear-cursor.nvim",
-})
-packadd("smear-cursor.nvim")
-require('smear_cursor').setup({
-    -- Smear cursor when switching buffers or windows.
-    smear_between_buffers = true,
-
-    -- Smear cursor when moving within line or to neighbor lines.
-    -- Use `min_horizontal_distance_smear` and `min_vertical_distance_smear` for finer control
-    smear_between_neighbor_lines = true,
-
-    -- Draw the smear in buffer space instead of screen space when scrolling
-    scroll_buffer_space = true,
-
-    -- Set to `true` if your font supports legacy computing symbols (block unicode symbols).
-    -- Smears and particles will look a lot less blocky.
-    legacy_computing_symbols_support = false,
-
-    -- Smear cursor in insert mode.
-    -- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
-    smear_insert_mode = true,
-})
+-- vim.pack.add({
+--     "https://github.com/sphamba/smear-cursor.nvim",
+-- })
+-- packadd("smear-cursor.nvim")
+-- require('smear_cursor').setup({
+--     -- Smear cursor when switching buffers or windows.
+--     smear_between_buffers = true,
+--
+--     -- Smear cursor when moving within line or to neighbor lines.
+--     -- Use `min_horizontal_distance_smear` and `min_vertical_distance_smear` for finer control
+--     smear_between_neighbor_lines = true,
+--
+--     -- Draw the smear in buffer space instead of screen space when scrolling
+--     scroll_buffer_space = true,
+--
+--     -- Set to `true` if your font supports legacy computing symbols (block unicode symbols).
+--     -- Smears and particles will look a lot less blocky.
+--     legacy_computing_symbols_support = false,
+--
+--     -- Smear cursor in insert mode.
+--     -- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
+--     smear_insert_mode = true,
+-- })
 
 -- mini.indentscope ---------------------------------------------------------------------------------------------------
 vim.pack.add({

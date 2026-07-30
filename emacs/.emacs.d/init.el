@@ -125,6 +125,28 @@
 ;; rust mode
 (use-package rust-mode)
 
+;; lua language server
+;; M-x treesit-install-language-grammar
+;; https://github.com/tree-sitter-grammars/tree-sitter-lua
+;; 1. Eglot 认识两个 mode
+(add-to-list 'eglot-server-programs
+             '((lua-mode lua-ts-mode) . ("lua-language-server")))
+
+;; 2. 自动进 lua-ts-mode（前提：Emacs29+ 且装了 lua grammar）
+(setq major-mode-remap-alist '((lua-mode . lua-ts-mode)))
+
+;; 3. 两个 hook 都挂（哪个生效挂哪个）
+(add-hook 'lua-ts-mode-hook #'eglot-ensure)
+(add-hook 'lua-mode-hook #'eglot-ensure)
+
+;; 4. 保存格式化
+(add-hook 'lua-ts-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook #'eglot-format-buffer nil t)))
+
+(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-ts-mode))
+
+
 ;; 弹窗补全
 (use-package corfu
   :init
