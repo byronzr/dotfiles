@@ -114,8 +114,10 @@ keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "clean highlight match" })
 keymap.set("n", "<leader>+", "<C-a>", { desc = "number increase" })
 keymap.set("n", "<leader>-", "<C-x>", { desc = "number decrease" })
 
-keymap.set("n", "<C-a>", "<Nop>", { desc = "disable default number increase" })
-keymap.set("n", "<C-x>", "<Nop>", { desc = "disable default number decrease" })
+-- "": Normal, Virsual, Select, Operator
+-- "!": Insert, Command-line
+keymap.set({"","!"}, "<C-a>", "<Nop>", { desc = "disable default number increase" })
+keymap.set({"","!"}, "<C-x>", "<Nop>", { desc = "disable default number decrease" })
 
 -- 一些emacs小快捷键一致性
 keymap.set('n', '<C-e>', '$')
@@ -128,7 +130,7 @@ keymap.set({ 'i', 'n' }, '<C-l>', 'zz')
 keymap.set('i', '<C-d>', '<Delete>')
 
 -- 保存并格式化
-keymap.set({ 'i', 'n' }, '<C-x><C-s>', function()
+keymap.set({"","!"}, '<C-x><C-s>', function()
     vim.lsp.buf.format()
     vim.cmd("stopinsert")
     vim.cmd("write")
@@ -164,6 +166,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 --     })
 --   end,
 -- })
+--
 
 
 -- colorscheme --------------------------------------------------------------------------------------------------------
@@ -503,34 +506,63 @@ vim.lsp.config["*"] = {
     capabilities = require("blink.cmp").get_lsp_capabilities(),
 }
 
-vim.lsp.config("lua_ls", {
-    cmd="/opt/homebrew/bin/lua-language-server",
-    -- filetypes={"lua"},
-    -- settings = {
-    --     Lua = {
-    --         -- workspace = { library = vim.api.nvim_get_runtime_file("lua", true) }, 
-    --         diagnostics = { globals = { "vim" } },
-    --         telemetry = { enable = false },
-    --     },
-    -- },
-      single_file_support = true,
-      root_dir = function(bufnr, on_dir)
-        local name = vim.api.nvim_buf_get_name(bufnr)
-        local root = vim.fs.root(name, { '.luarc.json', '.luarc.jsonc', '.git' ,'init.lua'})
-        on_dir(root or vim.fs.dirname(name))
-      end,
-      settings = {
-        Lua = {
-          diagnostics = {
-            globals = { 'vim' },
-          },
-          workspace = {
-            checkThirdParty = false,
-            library = vim.api.nvim_get_runtime_file('', true),
-          },
-        },
-      },
-})
+-- vim.lsp.config("lua_ls", {
+--     cmd="/opt/homebrew/bin/lua-language-server",
+--       single_file_support = true,
+--       root_dir = function(bufnr, on_dir)
+--         local name = vim.api.nvim_buf_get_name(bufnr)
+--         local root = vim.fs.root(name, { '.luarc.json', '.luarc.jsonc', '.git' ,'init.lua'})
+--         on_dir(root or vim.fs.dirname(name))
+--       end,
+--       settings = {
+--         Lua = {
+--           diagnostics = {
+--             globals = { 'vim' },
+--           },
+--           workspace = {
+--             checkThirdParty = false,
+--             library = vim.api.nvim_get_runtime_file('', true),
+--           },
+--         },
+--       },
+-- })
+-- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+--
+-- vim.lsp.config("lua_ls", {
+--   cmd = "/opt/homebrew/bin/lua-language-server",
+--   single_file_support = true,
+--   root_dir = function(bufnr, on_dir)
+--     local name = vim.api.nvim_buf_get_name(bufnr)
+--     local root = vim.fs.root(name, { '.luarc.json', '.luarc.jsonc', '.git' ,'init.lua'})
+--     on_dir(root or vim.fs.dirname(name))
+--   end,
+--   settings = {
+--     Lua = {
+--       diagnostics = { globals = { 'vim' } },
+--       workspace = {
+--         checkThirdParty = false,
+--         library = vim.api.nvim_get_runtime_file('', true),
+--       },
+--       format = { enable = true }, -- 启用 lua_ls 内建格式化
+--     },
+--   },
+--   on_attach = function(client, bufnr)
+--     if client.server_capabilities and client.server_capabilities.documentFormattingProvider then
+--       vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+--       vim.api.nvim_create_autocmd("BufWritePre", {
+--         group = augroup,
+--         buffer = bufnr,
+--         callback = function()
+--           vim.lsp.buf.format({
+--             bufnr = bufnr,
+--             timeout_ms = 2000,
+--             filter = function(c) return c.name == "lua_ls" end,
+--           })
+--         end,
+--       })
+--     end
+--   end,
+-- })
 
 vim.lsp.config("rust_analyzer", {
     cmd = { "/Users/byronzr/.cargo/bin/rust-analyzer" },
@@ -713,30 +745,6 @@ require("kulala").setup({
 vim.api.nvim_set_hl(0, "MyTodo", { fg = "#ffcc00", bold = true })
 vim.fn.matchadd("MyTodo", [[\v<(TODO|FIXME|NOTE|HACK):]])
 
--- animate.cursor------------------------------------------------------------------------------------------------------
--- vim.pack.add({
---     "https://github.com/sphamba/smear-cursor.nvim",
--- })
--- packadd("smear-cursor.nvim")
--- require('smear_cursor').setup({
---     -- Smear cursor when switching buffers or windows.
---     smear_between_buffers = true,
---
---     -- Smear cursor when moving within line or to neighbor lines.
---     -- Use `min_horizontal_distance_smear` and `min_vertical_distance_smear` for finer control
---     smear_between_neighbor_lines = true,
---
---     -- Draw the smear in buffer space instead of screen space when scrolling
---     scroll_buffer_space = true,
---
---     -- Set to `true` if your font supports legacy computing symbols (block unicode symbols).
---     -- Smears and particles will look a lot less blocky.
---     legacy_computing_symbols_support = false,
---
---     -- Smear cursor in insert mode.
---     -- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
---     smear_insert_mode = true,
--- })
 
 -- mini.indentscope ---------------------------------------------------------------------------------------------------
 vim.pack.add({

@@ -17,8 +17,8 @@
 (setq custom-file "~/.emacs.d/custom.el")
 
 ;; keyboard
-(setq mac-option-modifier 'super)
-(setq mac-command-modifier 'meta)
+;; (setq mac-option-modifier 'super)
+;; (setq mac-command-modifier 'meta)
 
 ;; 备份文件统一到 ~/.emacs.d/backups
 (setq backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory))))

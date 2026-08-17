@@ -1,0 +1,18 @@
+font-family = "JetBrainsMono Nerd Font Mono"
+# font-style = Medium 
+font-size = 14
+# font-style = Regular
+# font-style = SemiBold 
+font-style = Bold 
+# background = "#101010"
+theme = Ayu
+cursor-style = block
+cursor-style-blink = true
+window-padding-balance = true
+# adjust-cell-height = 25%
+title = ""
+window-save-state = always
+window-decoration = none
+
+custom-shader = shaders/cursor_warp.glsl
+custom-shader = shaders/ripple_rectangle_cursor.glsl
