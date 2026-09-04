@@ -1,7 +1,10 @@
 font-family = "JetBrainsMono Nerd Font Mono"
+# font-family = "IosevkaTerm Nerd Font Mono"
+# font-family = "SF Mono"
 # font-style = Medium 
 font-size = 14
-# font-style = Regular
+font-thicken = false
+font-style = Regular
 # font-style = SemiBold 
 font-style = Bold 
 # background = "#101010"

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (require 'package)
 ;; (add-to-list 'package-archives
 ;;             '("GNU"   . "https://elpa.gnu.org/packages/") t)
@@ -40,6 +42,7 @@
 ;; 补全方案2 Vertico + 网格 （不会触发TAB二次补全）
 ;; 配合 marginalia 获得更多信息，但是会使排版错乱，未成高手前不打算用
 (use-package vertico
+  :ensure
   :init
   (vertico-mode 1)
   ;; (vertico-grid-mode 1)					; 开启多列/网格
@@ -57,6 +60,7 @@
 ;; 补全方案增强 （加大空间利用率放置注释信息）
 ;; Marginalia（注释增强）
 (use-package marginalia
+  :ensure t
   :init
   (marginalia-mode 1)
   ;; 可选：为 M-x 使用更详细的命令注释
@@ -108,6 +112,7 @@
 ;; (setq catppuccin-flavor 'mocha)		; 主题模式
 ;; (load-theme 'ayu)						
 (use-package ayu-theme
+  :ensure t
   :config (load-theme 'ayu-dark t))
 
 (use-package doom-modeline
@@ -116,14 +121,17 @@
 
 
 ;; wgsl mode
-(use-package wgsl-mode)
+;; (use-package wgsl-mode)
+
 (use-package eglot
+  :ensure t
   :config
   (add-to-list 'eglot-server-programs
                '(wgsl-mode . ("wgsl_analyzer"))))
 
 ;; rust mode
-(use-package rust-mode)
+(use-package rust-mode
+  :ensure t)
 
 ;; lua language server
 ;; M-x treesit-install-language-grammar
@@ -149,6 +157,7 @@
 
 ;; 弹窗补全
 (use-package corfu
+  :ensure t  
   :init
   (global-corfu-mode)              ;; 全局启用补全弹窗
   :custom
@@ -192,6 +201,7 @@
 
 ;; Eglot（LSP，提供语义补全/跳转/签名等）
 (use-package eglot
+  :ensure t
   :hook ((rust-ts-mode . eglot-ensure)
          (rust-mode    . eglot-ensure))
   :config
@@ -258,6 +268,7 @@
 ;; brew install tree-sitter 
 ;; brew install libstree* 
 (use-package treesit-auto
+    :ensure t
   :init
   (setq treesit-auto-langs '(rust python javascript json c c++ go))
   :config
@@ -269,6 +280,7 @@
 
 ;; markdown-mode 还是要的
 (use-package markdown-mode
+  :ensure t
   :mode ("\\.md\\'" . markdown-mode)
   :init
   (setq markdown-command "multimarkdown"))  ;; 可选：渲染命令
@@ -278,6 +290,7 @@
 
 ;; multiple cursor 多光标批量操作
 (use-package multiple-cursors
+    :ensure t
   :bind (
 	 ("M-n" . mc/mark-next-like-this)
 	 ("M-p" . mc/mark-previous-like-this)
@@ -285,11 +298,13 @@
 
 ;; 扩展选择(选中当标当前单词，逐步向外延伸)
 (use-package expand-region
+  :ensure t  
   :bind
   ("C-'" . er/expand-region))
 
 ;;which-key
 (use-package which-key
+  :ensure t  
   :diminish
   :config
   (setq which-key-show-early-on-C-h t)
@@ -299,16 +314,23 @@
 ;; 多点编辑
 ;; C-; 开启快速选取相同，再统一编辑与mc/mark不同
 ;; iedit一次全选
-(use-package iedit)
+(use-package iedit
+    :ensure t
+  )
 
 ;; 更快的 ripgrep
-(use-package rg)
+(use-package rg
+  :ensure t
+  )
 
 ;; magit mode
-(use-package magit)
+(use-package magit
+  :ensure t
+  )
 
 ;; avy
 (use-package avy
+    :ensure t
   :config
   (defun my/avy-goto-char-2--beacon-blink (&rest _)
     (when (bound-and-true-p beacon-mode)
@@ -321,6 +343,7 @@
 
 ;; 目录浏览
 (use-package dired-sidebar
+    :ensure t
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
   :commands (dired-sidebar-toggle-sidebar)
   :init
@@ -446,8 +469,10 @@
 
 
 ;;
-(use-package beacon)
-(beacon-mode 1)
+;; (use-package beacon
+;;     :ensure t
+;;   )
+;; (beacon-mode 1)
 
 ;; (use-package beacon
 ;;   :ensure t

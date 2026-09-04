@@ -32,7 +32,7 @@ opt.cursorline = true
 opt.mouse:append("a")
 
 -- 系统剪贴板
-    opt.clipboard:append("unnamedplus")
+opt.clipboard:append("unnamedplus")
 
 -- 默认新窗口位置
 opt.splitright = true
@@ -94,7 +94,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 --insert mode--
-keymap.set("i", "kj", "<ESC>")
+keymap.set({ "i", "x" }, "kj", "<ESC>")
 
 -- continuously paste
 vim.keymap.set("x", "p", [["_dP]], { desc = "Paste without yanking replaced text" })
@@ -116,8 +116,8 @@ keymap.set("n", "<leader>-", "<C-x>", { desc = "number decrease" })
 
 -- "": Normal, Virsual, Select, Operator
 -- "!": Insert, Command-line
-keymap.set({"","!"}, "<C-a>", "<Nop>", { desc = "disable default number increase" })
-keymap.set({"","!"}, "<C-x>", "<Nop>", { desc = "disable default number decrease" })
+keymap.set({ "", "!" }, "<C-a>", "<Nop>", { desc = "disable default number increase" })
+keymap.set({ "", "!" }, "<C-x>", "<Nop>", { desc = "disable default number decrease" })
 
 -- 一些emacs小快捷键一致性
 keymap.set('n', '<C-e>', '$')
@@ -130,11 +130,14 @@ keymap.set({ 'i', 'n' }, '<C-l>', 'zz')
 keymap.set('i', '<C-d>', '<Delete>')
 
 -- 保存并格式化
-keymap.set({"","!"}, '<C-x><C-s>', function()
+keymap.set({ "", "!" }, '<C-x><C-s>', function()
     vim.lsp.buf.format()
     vim.cmd("stopinsert")
     vim.cmd("write")
 end, { desc = "save file" })
+
+-- markdown <u>
+keymap.set('v', '<Leader>u', 'c<u><C-r>"</u><Esc>', { desc = 'Wrap selection with <u>' })
 
 -- buffer 切换
 keymap.set("n", "<leader>bn", "<cmd>bnext<CR>", { desc = "buffer next" })
@@ -160,9 +163,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- vim.api.nvim_create_autocmd("BufWritePre", {
 --   pattern = "*",
 --   callback = function(args)
---     vim.lsp.buf.format({ 
+--     vim.lsp.buf.format({
 --       bufnr = args.buf,
---       async = false, 
+--       async = false,
 --     })
 --   end,
 -- })
@@ -283,7 +286,7 @@ keymap.set("n", "<leader>ff", function()
 end, { desc = "fzf files" })
 
 keymap.set("n", "<leader>fg", function()
-    require("fzf-lua").live_grep({resume=true})
+    require("fzf-lua").live_grep({ resume = true })
 end, { desc = "fzf live grep {resume}" })
 
 keymap.set("n", "<leader>fb", function()
@@ -326,6 +329,8 @@ local setup_treesitter = function()
         "typescript",
         "toml",
         "wgsl",
+        "markdown",
+        "markdown_inline",
     }
     local config = require("nvim-treesitter.config")
     local already_installed = config.get_installed()
@@ -566,14 +571,14 @@ vim.lsp.config["*"] = {
 
 vim.lsp.config("rust_analyzer", {
     cmd = { "/Users/byronzr/.cargo/bin/rust-analyzer" },
-    filetypes = {"rust"},
+    filetypes = { "rust" },
     settings = {
         ["rust-analyzer"] = {
             cargo = { allFeatures = true },
             procMacro = { enable = true },
             check = {
                 command = "clippy",
-                extraArgs = { "--no-deps" },  -- 只查自己代码，不查依赖
+                extraArgs = { "--no-deps" }, -- 只查自己代码，不查依赖
             },
             lens = {
                 debug = {
@@ -610,7 +615,7 @@ vim.lsp.config("rust_analyzer", {
 
 vim.lsp.config("taplo", {
     cmd = { "/opt/homebrew/bin/taplo", "lsp", "stdio" },
-    filetypes = {"toml"},
+    filetypes = { "toml" },
 })
 
 vim.lsp.enable({
