@@ -16,6 +16,7 @@ window-padding-balance = true
 title = ""
 window-save-state = always
 window-decoration = none
+macos-option-as-alt = true
 
 custom-shader = shaders/cursor_warp.glsl
 custom-shader = shaders/ripple_rectangle_cursor.glsl

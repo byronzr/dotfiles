@@ -132,7 +132,11 @@ keymap.set('i', '<C-d>', '<Delete>')
 -- 保存并格式化
 keymap.set({ "", "!" }, '<C-x><C-s>', function()
     vim.lsp.buf.format()
-    vim.cmd("stopinsert")
+    vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+        "n",
+        false
+    )
     vim.cmd("write")
 end, { desc = "save file" })
 
@@ -159,18 +163,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
         vim.hl.on_yank()
     end
 })
-
--- vim.api.nvim_create_autocmd("BufWritePre", {
---   pattern = "*",
---   callback = function(args)
---     vim.lsp.buf.format({
---       bufnr = args.buf,
---       async = false,
---     })
---   end,
--- })
---
-
 
 -- colorscheme --------------------------------------------------------------------------------------------------------
 vim.pack.add({
@@ -329,9 +321,22 @@ local setup_treesitter = function()
         "typescript",
         "toml",
         "wgsl",
+        "wgsl_bevy",
         "markdown",
         "markdown_inline",
     }
+    -- .wesl
+    vim.filetype.add({
+        extension = {
+            wesl = "wesl",
+        },
+    })
+
+    -- WESL 暂时使用 WGSL parser
+    vim.treesitter.language.register("wgsl", {
+        "wesl",
+    })
+
     local config = require("nvim-treesitter.config")
     local already_installed = config.get_installed()
     local parsers_to_install = {}
@@ -511,64 +516,6 @@ vim.lsp.config["*"] = {
     capabilities = require("blink.cmp").get_lsp_capabilities(),
 }
 
--- vim.lsp.config("lua_ls", {
---     cmd="/opt/homebrew/bin/lua-language-server",
---       single_file_support = true,
---       root_dir = function(bufnr, on_dir)
---         local name = vim.api.nvim_buf_get_name(bufnr)
---         local root = vim.fs.root(name, { '.luarc.json', '.luarc.jsonc', '.git' ,'init.lua'})
---         on_dir(root or vim.fs.dirname(name))
---       end,
---       settings = {
---         Lua = {
---           diagnostics = {
---             globals = { 'vim' },
---           },
---           workspace = {
---             checkThirdParty = false,
---             library = vim.api.nvim_get_runtime_file('', true),
---           },
---         },
---       },
--- })
--- local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
---
--- vim.lsp.config("lua_ls", {
---   cmd = "/opt/homebrew/bin/lua-language-server",
---   single_file_support = true,
---   root_dir = function(bufnr, on_dir)
---     local name = vim.api.nvim_buf_get_name(bufnr)
---     local root = vim.fs.root(name, { '.luarc.json', '.luarc.jsonc', '.git' ,'init.lua'})
---     on_dir(root or vim.fs.dirname(name))
---   end,
---   settings = {
---     Lua = {
---       diagnostics = { globals = { 'vim' } },
---       workspace = {
---         checkThirdParty = false,
---         library = vim.api.nvim_get_runtime_file('', true),
---       },
---       format = { enable = true }, -- 启用 lua_ls 内建格式化
---     },
---   },
---   on_attach = function(client, bufnr)
---     if client.server_capabilities and client.server_capabilities.documentFormattingProvider then
---       vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
---       vim.api.nvim_create_autocmd("BufWritePre", {
---         group = augroup,
---         buffer = bufnr,
---         callback = function()
---           vim.lsp.buf.format({
---             bufnr = bufnr,
---             timeout_ms = 2000,
---             filter = function(c) return c.name == "lua_ls" end,
---           })
---         end,
---       })
---     end
---   end,
--- })
-
 vim.lsp.config("rust_analyzer", {
     cmd = { "/Users/byronzr/.cargo/bin/rust-analyzer" },
     filetypes = { "rust" },
@@ -613,16 +560,48 @@ vim.lsp.config("rust_analyzer", {
     }
 })
 
+-- WGSL,WESL: 未支持 import 定义,报错不易于阅读
+-- vim.lsp.config("wgsl_analyzer", {
+--     cmd = { "/Users/byronzr/.cargo/bin/wgsl-analyzer" },
+--     filetypes = { "wgsl", "wesl" },
+-- })
+
+-- Toml
 vim.lsp.config("taplo", {
     cmd = { "/opt/homebrew/bin/taplo", "lsp", "stdio" },
     filetypes = { "toml" },
+})
+
+-- Lua Api
+vim.lsp.config("lua_ls", {
+    settings = {
+        Lua = {
+            runtime = {
+                version = "LuaJIT",
+            },
+
+            diagnostics = {
+                globals = {
+                    "vim",
+                },
+            },
+
+            workspace = {
+                library = {
+                    vim.env.VIMRUNTIME,
+                },
+            },
+        },
+    },
 })
 
 vim.lsp.enable({
     "taplo",
     "lua_ls",
     "rust_analyzer",
+    -- "wgsl_analyzer",
 })
+
 
 -- blink.cmp-----------------------------------------------------------------------------------------------------------
 vim.pack.add({
@@ -738,14 +717,6 @@ vim.pack.add({ {
 --     -- Put your configuration here
 -- })
 
--- kulala(rest client)-------------------------------------------------------------------------------------------------
-vim.pack.add({
-    "https://github.com/mistweaverco/kulala.nvim"
-})
-packadd("kulala.nvim")
-require("kulala").setup({
-    global_keymaps = true
-})
 
 vim.api.nvim_set_hl(0, "MyTodo", { fg = "#ffcc00", bold = true })
 vim.fn.matchadd("MyTodo", [[\v<(TODO|FIXME|NOTE|HACK):]])
